@@ -224,6 +224,12 @@ void snake_move()
     }
 }
 
+
+void main()  //游戏模式选择
+{
+    
+}
+
 void control_direction()          //操作方向函数，接收从键盘输入的按键，控制蛇行进方向
 {
     char ch = _getch();
