@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <conio.h>
 #include <time.h>
 #include <windows.h>
@@ -9,12 +10,14 @@
 #define HEIGHT 40           //地图高度
 #define SNAKEN 6            //蛇初始长度
 #define LIFE 1              //生命次数
-#define SPEED 120           //游戏速度(游戏循环时间)
+//#define SPEED 70           //游戏速度(游戏循环时间)
 #define U 1                 
 #define D 2                 
 #define L 3                 //蛇的状态，U：上 ；D：下；L:左 R：右
 #define R 4                 
 
+int Mode;
+char ModeName[20]="hello";
 int food_x,food_y;
 int if_game_again=1;           
 
@@ -85,6 +88,8 @@ void map()              //打印地图函数
     printf("if you want to pause the game?");
     gotoxy(101,20);
     printf("please enter 'Space' ");
+	gotoxy(101,22);
+    printf("Current game mode:%s", ModeName);
     
 }
 
@@ -225,10 +230,7 @@ void snake_move()
 }
 
 
-void main()  //游戏模式选择
-{
-    
-}
+
 
 void control_direction()          //操作方向函数，接收从键盘输入的按键，控制蛇行进方向
 {
@@ -268,7 +270,7 @@ int die_1()                  //死亡条件1咬自己
 
 int die_2()                  //死亡条件2碰墙
 {
-    if (head->x <= 1 || head->x >= 98 || head->y <= 0 || head->y >= 38)
+    if (head-> x <= 1 || head->x >= 98 || head->y <= 0 || head->y >= 38)
         return 1;
     
     return 0;
@@ -349,17 +351,48 @@ void game_start()
 {
     char key2;
     int sw2=0;
-    gotoxy(38,15);
-    printf("Snake !");
-    gotoxy(38,17);
-    printf("Please enter the Space bar.");
+    gotoxy(38,12);
+    printf("Press the space to start the game");
+	gotoxy(38,14);
+    printf("Choose game mode");
+	gotoxy(38,16);
+    printf("'E':    Easy'");
+	gotoxy(38,18);
+    printf("'C':    Common'");
+	gotoxy(38,20);
+    printf("'I':    Infernal'");
     while (!sw2)
     {
+		Mode=1;
         key2=_getch();
-        if (key2==' ')
-            sw2=1;
+        if (key2=='e')
+		{
+			Mode=1;
+			strcpy(ModeName, "Easy");
+			sw2=1;
+		}
+		if (key2=='c')
+		{
+			Mode=2;
+			strcpy(ModeName, "Common");
+			sw2=1;
+		}
+		if (key2=='i')
+		{
+			Mode=4;
+			strcpy(ModeName, "Infernal");
+			sw2=1;
+		}
     }
 }
+
+
+
+
+
+
+
+
 
 int main()
 {
@@ -370,6 +403,7 @@ int main()
     game_start();   //等待游戏开始界面
     while (if_game_again) 
     {
+		game_start();
         score=0;
         time_0= updatetime(); //更新游戏开始时间
         system("cls");      //清屏
@@ -381,6 +415,7 @@ int main()
 
         while (1)
         {
+			
             snake_move();                    
 
             if (_kbhit())//接收键盘按键
@@ -393,7 +428,7 @@ int main()
 
             gametime();   //更新游戏时间                
 
-            Sleep(SPEED);//循环延时（宏定义可以改变蛇的速度）
+            Sleep(100-(score*Mode));//循环延时（宏定义可以改变蛇的速度）
         }
         gameover();   //游戏结束                             
     }
