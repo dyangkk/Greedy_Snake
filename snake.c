@@ -59,15 +59,15 @@ void gametime()
 
 void map()              //打印地图函数
 {
-
-    for (int i = 1; i < WIDTH; i++)        //打印上下面墙
+    int i;
+    for (i = 1; i < WIDTH; i++)        //打印上下面墙
     {
         gotoxy(i, 38);
         printf("O");
         gotoxy(i, 0);
         printf("O");
     }
-    for (int i = 0; i < HEIGHT-1; i++)    //打印左右两面墙
+    for (i = 0; i < HEIGHT-1; i++)    //打印左右两面墙
     {
         gotoxy(1, i);
         printf("O");
