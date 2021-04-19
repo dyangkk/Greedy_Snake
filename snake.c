@@ -47,7 +47,7 @@ int time_0=updatetime();
 int time_1;
 
 
-void gametime()                           
+void Gametime()                           
 {
     time_1 = updatetime() - time_0;     //用现在的时间减去刚开始的时间得游戏时间
     gotoxy(116,8);
@@ -57,17 +57,17 @@ void gametime()
 
 //1：打印地图和随机食物
 
-void map()              //打印地图函数
+void Init_Map()              //打印地图函数
 {
-    int i;
-    for (i = 1; i < WIDTH; i++)        //打印上下面墙
+
+    for (int i = 1; i < WIDTH; i++)        //打印上下面墙
     {
         gotoxy(i, 38);
         printf("O");
         gotoxy(i, 0);
         printf("O");
     }
-    for (i = 0; i < HEIGHT-1; i++)    //打印左右两面墙
+    for (int i = 0; i < HEIGHT-1; i++)    //打印左右两面墙
     {
         gotoxy(1, i);
         printf("O");
@@ -90,10 +90,13 @@ void map()              //打印地图函数
     printf("please enter 'Space' ");
 	gotoxy(101,22);
     printf("Current game mode:%s", ModeName);
-    
+    gotoxy(106,34);
+    printf("ID:201910501019");    
+	gotoxy(106,36);
+    printf("Author:DengYang");
 }
 
-void produce_food()         //产生随机食物
+void Produce_Food()         //产生随机食物
 {
     srand(time(NULL));      
 
@@ -113,36 +116,39 @@ void produce_food()         //产生随机食物
     printf("o");
 }
 
+
+
+
 typedef struct snake
 {
-    int x;
+    int x;	//蛇身体位置坐标
     int y;
     struct snake* next;
 }snake;
 
-snake* head;                //蛇头指针
+snake* head;      //蛇头指针  指向结构体head的地址
 
-void initialization_snake() //初始化蛇
+void Init_Snake() //初始化蛇
 {   
-    snake *tail;            //蛇尾指针
+    snake *tail;  //蛇尾指针
     int i;
-
+	//蛇的初始位置
     tail = (snake*)malloc(sizeof(snake));
     tail->next = NULL;
     tail->x = HEIGHT-6;
     tail->y = 8;
-
-    for (i = 1; i <= SNAKEN; i++)               //在蛇尾处创建链表
+				//SNAKEN 宏定义 蛇的初始长度
+    for (i = 1; i <= SNAKEN; i++)     //在蛇尾处创建链表
     {
         head = (snake*)malloc(sizeof(snake));
         head->next = tail;
 
         head->x = 24 + i * 2;               
         head->y = 8;
-        tail = head;                            //此时蛇尾指针指向蛇头 
+        tail = head;         	     //此时蛇尾指针指向蛇头 
     }
 
-    while (tail)
+    while (tail)		
     {
         gotoxy(tail->x, tail->y);
         printf("o");
@@ -150,13 +156,16 @@ void initialization_snake() //初始化蛇
     }
 }
 
+
+
+
 int status = R;         //蛇前进状态
 
 snake* p = NULL;        //运行指针
 snake* nexthead;        //下一个蛇头
 int score = 0;          //得分
 
-void snake_move()       
+void Snake_Move()       
 {
     nexthead = (snake*)malloc(sizeof(snake));
 
@@ -196,9 +205,9 @@ void snake_move()
             p = p->next;                //创建头节点删除尾节点
         }                               //吃到食物就不删除尾节点
         
-        produce_food();                   //碰到食物则再产生一个食物
+        Produce_Food();                   //碰到食物则再产生一个食物
 
-        score++;
+        score+=10;;
         gotoxy(116, 2);
         printf("%d", score);
     }
@@ -224,7 +233,7 @@ void snake_move()
     while (p)                     //如果食物产生在蛇身上就再产生一个食物
     {
         if (p->x == food_x && p->y == food_y)
-            produce_food();
+            Produce_Food();
         p = p->next;
     }
 }
@@ -232,21 +241,25 @@ void snake_move()
 
 
 
-void control_direction()          //操作方向函数，接收从键盘输入的按键，控制蛇行进方向
+
+
+int ch;
+
+void Control_Direction()//操作方向函数，接收从键盘输入的按键，控制蛇行进方向
 {
-    char ch = _getch();
-    switch (ch)
+    ch = _getch();
+    switch (ch)		//up代表72，down代表80，left代表77，right代表75
     {
-        case 'w': 
+        case 72: 
             if(status != D)
                 status = U; break;
-        case 's': 
+        case 80: 
             if (status != U)
                 status = D; break;
-        case 'a': 
+        case 75: 
             if (status != R)
                 status = L; break;
-        case 'd': 
+        case 77: 
             if (status != L)
                 status = R; break;
         case ' ': 
@@ -275,28 +288,9 @@ int die_2()                  //死亡条件2碰墙
     
     return 0;
 }
-/*************************************************************************************
- * 
-清除并释放上一条蛇留下来的痕迹,但是发现无法清除之前打印的食物,所以就还是用的system("cls")
-void clean_die_snake()                  
-{                                       
-    p = head;                           
-    int _x_ = p->x;                 
-    int _y_ = p->y;
-    while (head)
-    {
-        gotoxy(head->x, head->y);
-        printf("  ");
-        head = head->next;
-        free(p);
-        p = head;
-    }
-}
-
-**************************************************************************************/
 
 
-void quit_game()        //退出游戏函数
+void Quit_Game()        //退出游戏函数
 {
     system("cls");
     gotoxy(55, 20);
@@ -317,7 +311,7 @@ void quit_game()        //退出游戏函数
 }                 
 
 
-void gameover()                     //失败选择界面
+void Gameover()                     //失败选择界面
 {
     char key1;
     int sw1=0;
@@ -347,7 +341,7 @@ void gameover()                     //失败选择界面
 
 
 
-void game_start()      
+void Game_Start()   //游戏开始提示界面   
 {
     char key2;
     int sw2=0;
@@ -361,13 +355,20 @@ void game_start()
     printf("'C':    Common'");
 	gotoxy(38,20);
     printf("'I':    Infernal'");
-    while (!sw2)
+	
+	
+	gotoxy(38,24);
+    printf("******201910501019*******");
+	gotoxy(38,26);
+    printf("*********DengYang*********");
+	
+    while (!sw2)		//游戏难度选择
     {
 		Mode=1;
         key2=_getch();
         if (key2=='e')
 		{
-			Mode=1;
+			Mode=1;	//Mode=1,通过后面函数实现蛇速度的控制
 			strcpy(ModeName, "Easy");
 			sw2=1;
 		}
@@ -399,39 +400,41 @@ int main()
     system("mode con cols=132 lines=40");   //初始化控制台大小
     system("title  Greedy_snake");          //标题
     HideCursor();                           //隐藏光标
-    map();      //初始化地图
-    game_start();   //等待游戏开始界面
+    Init_Map();      //初始化地图
+    Game_Start();   //等待游戏开始界面
     while (if_game_again) 
     {
-		game_start();
+		Game_Start();
         score=0;
         time_0= updatetime(); //更新游戏开始时间
         system("cls");      //清屏
-        produce_food();                   //初始化食物
-        map();                            //初始化地图
-        initialization_snake();           //初始化蛇
+        Produce_Food();                   //初始化食物
+        Init_Map();                       //初始化地图
+        Init_Snake();         			  //初始化蛇
         status = R;                       //初始化运动方向
         
 
         while (1)
         {
 			
-            snake_move();                    
+            Snake_Move();                    
 
             if (_kbhit())//接收键盘按键
             {
-                control_direction(); //方向控制
+                Control_Direction(); //方向控制
             }
             
             if (die_1() || die_2())//死亡条件
                 break;
 
-            gametime();   //更新游戏时间                
+            Gametime();   //更新游戏时间                
 
-            Sleep(100-(score*Mode));//循环延时（宏定义可以改变蛇的速度）
+            Sleep(90-(score*Mode));//循环延时（宏定义可以改变蛇的速度）
         }
-        gameover();   //游戏结束                             
+        Gameover();   //游戏结束                             
     }
-    quit_game();    //退出游戏
+    Quit_Game();    //退出游戏
     return 0;
 }
+
+
